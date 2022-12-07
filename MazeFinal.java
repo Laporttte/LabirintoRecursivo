@@ -1,12 +1,14 @@
 import java.io.*;
-public class Maze {
+public class MazeFinal {
     public static void main (String[] args) throws IOException {
         String path = "LabirintoTXT/mapaBonus2.txt";  File arq = new File(path);  
     
         int qntColuna=0, qntLinha=0, cont=-1, aux=0;
         int EntradaLin=0, EntradaCol=0, startx, starty; 
         boolean key_door = false;
-
+        
+        char [] vetKey = new char [100];
+        char [] vetDoor = new char [100];
         char [] vet = new char[100];
 
         /* Pega as linhas do arquivo e conta a qnt de linhas e colunas. */
@@ -41,11 +43,7 @@ public class Maze {
                 }
             }
         }
-
-        
-        char [] vetKey = new char [100];
-        char [] vetDoor = new char [100];
-
+ 
         startx = EntradaCol; starty = EntradaLin;
         labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, vetDoor, vetKey, cont, key_door, aux); // Parte principal
             
@@ -59,17 +57,27 @@ public class Maze {
                 System.out.print("Não há caminhos possiveis.");
             } else {
                 for (int i = 0; i < vet.length; i++) {
+                    if(i==0) {
+                        System.out.print("\nStart até chave: ");
+                            for (int j = 0; j < vetKey.length; j++) {
+                                System.out.print(vetKey[j]);
+                            }
+                        System.out.print("\nResto: ");
+
+                    }
                     System.out.print(vet[i]);
                 }
             }
-            System.out.println(vetKey[0]);
+            
 
 
 
     }
 
     public static int labirintoRecursivo (int EntradaCol,int EntradaLin, String matrizMaze [][], int qntColuna, int qntLinha, char vet[],char vetDoor[],char vetKey[], int cont, boolean key_door, int aux) {
-        cont++;
+            cont++;
+
+
 
             /* Se a posição da pessoa ultrapassa a matriz */
             if ( EntradaLin >= qntLinha || EntradaLin < 0 || EntradaCol >= qntColuna || EntradaCol < 0){
@@ -79,18 +87,17 @@ public class Maze {
 
             String posicaoAtual = matrizMaze[EntradaLin][EntradaCol]; // Recebe o valor da posição e não a localização
 
+
+
+            aux = searchKey(posicaoAtual);
+
             if (key_door) { //tem chave, logo tenho que procurar primeiro a chave -> porta -> saida;
-                //boolean chave = searchKey(posicaoAtual);
-
-                if (searchKey(posicaoAtual, aux) > 0) {
+                if (aux > 0) {
                      System.out.println("Achei a chave e somei aux");
-
                 }
-                    if (searchDoor(posicaoAtual) || searchKey(posicaoAtual, aux) == 1) {
+                    if (searchDoor(posicaoAtual) > 0 && aux > 0) {
                         System.out.println("Achei a porta");
                         key_door = false;
-                        vetKey = vet;
-
                     }
 
             } else { //procuro a saida;
@@ -115,26 +122,43 @@ public class Maze {
     
         /* RECURSÃO PARA AVANÇAR NO LABIRINTO */
 
+
         matrizMaze[EntradaLin][EntradaCol] = "^";
         if (labirintoRecursivo(EntradaCol, EntradaLin - 1, matrizMaze, qntColuna, qntLinha, vet,vetDoor, vetKey, cont, key_door, aux) !=0){
             vet[cont] += 'C';
+
+            if (aux <= 0) { //se ainda nao encontrou a chave, armazena os valores no vetkey
+                vetKey[cont] = 'C';
+            }
+
              return 1;
         }
         matrizMaze[EntradaLin][EntradaCol] = "v";
         if (labirintoRecursivo(EntradaCol, EntradaLin + 1, matrizMaze, qntColuna, qntLinha, vet,vetDoor, vetKey, cont, key_door, aux) !=0){
             vet[cont] += 'B';
+            if (aux <= 0) { //se ainda nao encontrou a chave, armazena os valores no vetkey
+                vetKey[cont] += 'B';
+            }
             return 1;
        }
 
         matrizMaze[EntradaLin][EntradaCol] = "<";
         if (labirintoRecursivo(EntradaCol - 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet,vetDoor, vetKey, cont, key_door, aux) !=0){
             vet[cont] += 'E';
+            
+            if  (aux <= 0) { //se ainda nao encontrou a chave, armazena os valores no vetkey
+                vetKey[cont] = 'E';
+            }
             return 1;
        }
 
         matrizMaze[EntradaLin][EntradaCol] = ">";
         if (labirintoRecursivo(EntradaCol + 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet,vetDoor, vetKey, cont, key_door, aux) !=0){
             vet[cont] += 'D';
+            
+            if (aux <= 0) { //se ainda nao encontrou a chave, armazena os valores no vetkey
+                vetKey[cont] = 'D';
+            }
             return 1;
        }
 
@@ -174,19 +198,18 @@ public class Maze {
         }
     }
 
-    public static int searchKey (String posicaoAtual, int aux) {
-        aux++;
+    public static int searchKey (String posicaoAtual) {
         if (posicaoAtual.equalsIgnoreCase("K")) {
-            return aux;
+            return 1;
         }
-        return aux;
+        return 0;
     }
     
-    public static boolean searchDoor (String posicaoAtual) { 
+    public static int searchDoor (String posicaoAtual) { 
         if (posicaoAtual.equalsIgnoreCase("D")) {
-            return true;
+            return 1;
         }
-        return false;
+        return 0;
     }
 
 
