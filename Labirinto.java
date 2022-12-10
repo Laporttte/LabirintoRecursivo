@@ -1,37 +1,35 @@
 /*************************************************************************
     Alunos
-        Artur Marcos da Silva - 
-        Anna Carla... -
-        Flavio G... -
+        Artur Marcos da Silva - 00796214
+        Anna Carla Teixeira da Silva - 00796175
+        Flavio Gomes Reis - 796524
 
-    Labirinto versão: 5.1
+    Labirinto versão: 5.3
 
     Funções: 
         -> Void main - É a função principal, onde lê o arquivo, procura as posições iniciais/existencia de chaves, chama funções e imprime resultados.
         -> labirintoRecursivo - Função que faz a chamada recursiva, preenche a matriz com simbolos, armazena direções do resultado e possui pontos de return.
-        -> fileToArray - Usada p/ preencher a matrizMaze[] com o valor do arquivo txt;
-        -> printArray - Usada p/ imprimir a matriz
+        -> arqParaMatriz - Usada p/ preencher a matrizMaze[] com o valor do arquivo txt;
+        -> imprimeMatriz - Usada p/ imprimir a matriz
         -> limpaVet - Usada p/ limpar o vetor principal - (Evita erros ao substituir valores no vetor, tais como retorno de "?")
-        -> semcaminho - Verifica se o vetor está preenchido e só retorna caso não estiver, escrevendo um alerta;
+        -> semCaminho - Verifica se o vetor está preenchido e só retorna caso não estiver, escrevendo um alerta;
 
  **************************************************************************/
 
 import java.io.*;
 public class Labirinto {
     public static void main (String[] args) throws IOException {
-        String path = "LabirintoTXT/mapaBonus1.txt";  File arq = new File(path);  //Escolha do mapa.
+        String path = "LabirintoTXT/mapaBonus2.txt";  File arq = new File(path);  //Escolha do mapa.
     
         int qntColuna=0, qntLinha=0;            // armazena tam do labirinto p/ criar matriz.
-        int cont=-1, aux=0;                     // cont é aux p/ indice do vetor que armazena respostas | aux é auxiliar p/ identificar o que pesquisar primeiro ("K" ou "D")
+        int indexVetor=-1, id=0;               // é aux p/ indice do vetor que armazena respostas | aux é auxiliar p/ identificar o que pesquisar primeiro ("K" ou "D")
         int EntradaLin=0, EntradaCol=0;         // armazena entradas temporariamentes ("S") ou ("S" -> "K" -> "D")
         int startx=0, starty=0;                 // var's p/ armazenar valores do "S" e poder imprimi-lo na posição certa (final do codigo)
         boolean key_door = false;               // boolean p/ existencia de chave
         char [] vet = new char[100];            // Recebe todas as respostas temporariamente
-        char [] vetKey = new char[100];         // Recebe respostas do start até door
-        char [] vetDoor = new char[100];        // Recebe respostas da door até exit
         String result ="";                      // String que armazena todas as respostas
         String [] coordenadas= new String [2];  // serve para armazenar onde estava a chave e a porta; (Assim, as entradas mudam).
-
+        
         try {
             FileReader fileReader = new FileReader(arq);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -47,7 +45,7 @@ public class Labirinto {
         }
 
         String matrizMaze [] [] = new String [qntLinha] [qntColuna];    // declaração da matriz
-            fileToArray(matrizMaze, arq);   // preenchimento da matriz com os valores do arquivo
+        arqParaMatriz(matrizMaze, arq);   // preenchimento da matriz com os valores do arquivo
 
         /* Estrutura de repetição p/ verificar existencia de chaves e armazenar posição inicial ("S")/start */
         for (int i = 0; i < matrizMaze.length; i++) {  
@@ -65,26 +63,24 @@ public class Labirinto {
 
         /* Estrutura condicional caso o labirinto possua chaves */
         if (key_door == true) { 
-        // Procura a chave
-            aux = 1; // o valor 1 informa que a função recursiva deve procurar a chave.
+            // Procura a chave      
+            id = 1; // o valor 1 informa que a função recursiva deve procurar a chave.
 
-            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas);
-            matrizMaze[starty][startx] = "S"; // passa valor "S" p/matriz ser impressa corretamente
-                printArray(matrizMaze); // imprime a matriz (com simbolos)
+            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas);
+                imprimeMatriz(matrizMaze, startx, starty); // imprime a matriz (com simbolos)
             System.out.print("\tInicio -> chave: ");
-                semcaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
+                semCaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
 
-            vetKey = vet;
-            for (int j = 0; j < vetKey.length; j++) {
-                System.out.print(vetKey[j]);
+            for (int j = 0; j < vet.length; j++) {
+                System.out.print(vet[j]);
             }
-            System.out.print("\n\n");
-            cont=-1; // apos receber e imprimir os resultados, reseta aux do index do vetor
+                System.out.print("\n\n");
 
+            indexVetor=-1; // apos receber e imprimir os resultados, reseta aux do index do vetor
             /* enquanto o vetor de chaves tiver posições/valores validos, armazena na string result */
-            for (int i = 0; i < vetKey.length; i++) {
-                if ((vetKey[i]=='C') || (vetKey[i]=='E') || (vetKey[i]=='B') || (vetKey[i]=='D')) { 
-                    result +=vetKey[i];
+            for (int i = 0; i < vet.length; i++) {
+                if ((vet[i]=='C') || (vet[i]=='E') || (vet[i]=='B') || (vet[i]=='D')) { 
+                    result +=vet[i];
                 }
             }
             limpaVet (vet); // limpa o vetor para evitar erros no armazenamento de novos itens.
@@ -95,29 +91,27 @@ public class Labirinto {
                 EntradaLin = Integer.parseInt(key[0]); // linha ex: "5"
                 EntradaCol = Integer.parseInt(key[1]); // coluna ex: "0"
             }
-            fileToArray(matrizMaze, arq); // Prenchimento da matriz
+                arqParaMatriz(matrizMaze, arq); // Prenchimento da matriz com novas entradas
 
-        // Procura a porta
-            aux = 2; // o valor 1 informa que a função recursiva deve procurar a chave.
+            // Procura a porta
+            id = 2; // o valor 1 informa que a função recursiva deve procurar a chave.
 
-            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas); 
-            matrizMaze[starty][startx] = "S"; // passa valor "S" p/matriz ser impressa corretamente
-                printArray(matrizMaze); // imprime a matriz (com simbolos)
+            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas); 
+            imprimeMatriz(matrizMaze, startx, starty); // imprime a matriz (com simbolos)
 
             System.out.print("\tChave -> porta: ");
-                semcaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
+            semCaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
 
-            vetDoor = vet;
-            for (int j = 0; j < vetDoor.length; j++) {
-                System.out.print(vetDoor[j]);
+            for (int j = 0; j < vet.length; j++) {
+                System.out.print(vet[j]);
             }
             System.out.print("\n\n");
-            cont=-1; // apos receber e imprimir os resultados, reseta aux do index do vetor
 
+            indexVetor=-1; // apos receber e imprimir os resultados, reseta aux do index do vetor
             /* enquanto o vetor de portas tiver posições/valores validos, armazena na string result */
-            for (int i = 0; i < vetDoor.length; i++) {
-                if ((vetDoor[i]=='C') || (vetDoor[i]=='E') || (vetDoor[i]=='B') || (vetDoor[i]=='D')) {
-                    result +=vetDoor[i];
+            for (int i = 0; i < vet.length; i++) {
+                if ((vet[i]=='C') || (vet[i]=='E') || (vet[i]=='B') || (vet[i]=='D')) {
+                    result +=vet[i];
                 }
             }
             limpaVet (vet); // limpa o vetor para evitar erros no armazenamento de novos itens.
@@ -129,16 +123,15 @@ public class Labirinto {
                 EntradaCol = Integer.parseInt(door[1]);
             }
             key_door = false; // Passa que o valores já foram encontrados.    
-            fileToArray(matrizMaze, arq); // Prenchimento da matriz
-        } //fim da parte de chaves e portas
+                arqParaMatriz(matrizMaze, arq); // Prenchimento da matriz
+        } 
 
-            /* parte da entrada até a saida ou da entrada até a saida */
-            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas); 
-            matrizMaze[starty][startx] = "S"; // passa valor "S" p/matriz ser impressa corretamente
-                printArray(matrizMaze); // imprime a matriz (com simbolos)
+            /* Porta até a saida ou Entrada até a saida */
+            labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas); 
+                imprimeMatriz(matrizMaze, startx, starty); // imprime a matriz (com simbolos)
             
                 System.out.print("\tPorta -> saida: ");
-                semcaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
+                semCaminho (vet); // função que só retorna se não tiver um caminho e alerta a não existencia de um.
 
             /* enquanto o vetor de portas tiver posições/valores validos, armazena na string result */
             for (int i = 0; i < vet.length; i++) {
@@ -159,8 +152,8 @@ public class Labirinto {
             }
     }
 
-    public static int labirintoRecursivo (int EntradaCol,int EntradaLin, String matrizMaze [][], int qntColuna, int qntLinha, char vet[], int cont, boolean key_door, int aux, String [] coordenadas) {
-        cont++;
+    public static int labirintoRecursivo (int EntradaCol,int EntradaLin, String matrizMaze [][], int qntColuna, int qntLinha, char vet[], int indexVetor, boolean key_door, int id, String [] coordenadas) {
+        indexVetor++;
 
             /* Se o NPC ultrapassa matriz - retorna um passo */
             if ( EntradaLin >= qntLinha || EntradaLin < 0 || EntradaCol >= qntColuna || EntradaCol < 0){
@@ -174,46 +167,45 @@ public class Labirinto {
                 return 0;
             }   
             
-                // valida se é a hora de procurar a chave, se tem chave no labirinto e se a posição atual é a chave
-                if ((posicaoAtual.equalsIgnoreCase("k")) && aux==1 && key_door==true) { 
-                        coordenadas[0]= EntradaLin+"-"+EntradaCol;
-                    return 1;
-                }
+            // valida se é a hora de procurar a chave, se tem chave no labirinto e se a posição atual é a chave
+            if ((posicaoAtual.equalsIgnoreCase("k")) && id==1 && key_door==true) { 
+                coordenadas[0]= EntradaLin+"-"+EntradaCol;
+                return 1;
+            }
 
-                // valida se é a hora de procurar a porta, se tem chave no labirinto e se a posição atual é a porta
-                if ((posicaoAtual.equalsIgnoreCase("d")) && aux==2 && key_door==true) { 
-                    key_door = false;    
-                    coordenadas[1]= EntradaLin+"-"+EntradaCol;
-                    return 1;
-                }
+            // valida se é a hora de procurar a porta, se tem chave no labirinto e se a posição atual é a porta
+            if ((posicaoAtual.equalsIgnoreCase("d")) && id==2 && key_door==true) { 
+                coordenadas[1]= EntradaLin+"-"+EntradaCol;
+                key_door = false;    
+                return 1;
+            }
 
-                // valida se é a hora de procurar a saida, se não tem mais chaves para procurar e se a posição atual é a chave
-                if (posicaoAtual.equalsIgnoreCase("E") && key_door==false) {
-                    return 1;
-                }
+            // valida se é a hora de procurar a saida, se não tem mais chaves para procurar e se a posição atual é a chave
+            if (posicaoAtual.equalsIgnoreCase("E") && key_door==false) {
+                return 1;
+            }
 
-        /* Passos recursivos */
-
+        /* PASSOS RECURSIVOS */
         matrizMaze[EntradaLin][EntradaCol] = "^"; // posição atual recebe valor
-        if (labirintoRecursivo(EntradaCol, EntradaLin - 1, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas) !=0){ // se der diferente de zero (dos return 0), continua a procura do passo recursivo
-            vet[cont] += 'C'; //armazena valor no vetor temporario
+        if (labirintoRecursivo(EntradaCol, EntradaLin - 1, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas) !=0){ // se der diferente de zero (dos return 0), continua a procura do passo recursivo
+            vet[indexVetor] += 'C'; // armazena valor no vetor temporario
              return 1; 
         }
         matrizMaze[EntradaLin][EntradaCol] = "v";
-        if (labirintoRecursivo(EntradaCol, EntradaLin + 1, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas) !=0){
-            vet[cont] += 'B';
+        if (labirintoRecursivo(EntradaCol, EntradaLin + 1, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas) !=0){
+            vet[indexVetor] += 'B';
             return 1;
         }
 
         matrizMaze[EntradaLin][EntradaCol] = "<";
-        if (labirintoRecursivo(EntradaCol - 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas) !=0){
-            vet[cont] += 'E';
+        if (labirintoRecursivo(EntradaCol - 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas) !=0){
+            vet[indexVetor] += 'E';
             return 1;
         }
 
         matrizMaze[EntradaLin][EntradaCol] = ">";
-        if (labirintoRecursivo(EntradaCol + 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, cont, key_door, aux, coordenadas) !=0){
-            vet[cont] += 'D';
+        if (labirintoRecursivo(EntradaCol + 1, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas) !=0){
+            vet[indexVetor] += 'D';
             return 1;
         }
 
@@ -222,12 +214,10 @@ public class Labirinto {
 
     }
 
-    public static void fileToArray (String matrizMaze[][], File arq ) {
+    public static void arqParaMatriz (String matrizMaze[][], File arq ) {
         /* lê arquivo e armazena em matriz */
-
         int i=0; // int para ajudar percorrer linhas.
         char caracter;
-
         try {
             FileReader fileReader = new FileReader(arq);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -246,8 +236,9 @@ public class Labirinto {
         }
     }
 
-    public static void printArray (String matrizMaze[][]) {
+    public static void imprimeMatriz (String matrizMaze[][], int startx, int starty) {
         /* imprime matriz */
+        matrizMaze[starty][startx] = "S"; // passa valor "S" p/matriz ser impressa corretamente
 
         for (int i = 0; i < matrizMaze.length; i++) {
             for (int j = 0; j < matrizMaze[i].length; j++) {
@@ -259,16 +250,14 @@ public class Labirinto {
 
     public static void limpaVet (char vet[]) {
         /* função para que "apague" o que tinha no vet*/
-
         char [] limpa = new char [100];
         for (int i = 0; i < limpa.length; i++) {
             vet[i] = limpa[i];
         }
     }
 
-    public static void semcaminho (char vet[]) {
+    public static void semCaminho (char vet[]) {
         /* função verifica se o vetor está vazio, caso esteja, mostra que não há caminhos */
-
         if ((vet[0]!='C') && (vet[0]!='E') && (vet[0]!='B') && (vet[0]!='D')) { //se nao tem nada preenchido
             System.out.print("Não há caminhos possiveis.\n\n");
         }

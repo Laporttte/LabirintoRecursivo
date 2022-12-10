@@ -1,3 +1,21 @@
+/*************************************************************************
+    Alunos
+        Artur Marcos da Silva - 
+        Anna Carla... -
+        Flavio G... -
+
+    Labirinto versão: 4.0
+
+    Funções: 
+        -> Void main - É a função principal, onde lê o arquivo, procura as posições iniciais/existencia de chaves, chama funções e imprime resultados.
+        -> labirintoRecursivo - Função que faz a chamada recursiva, preenche a matriz com simbolos, armazena direções do resultado e possui pontos de return.
+        -> fileToArray - Usada p/ preencher a matrizMaze[] com o valor do arquivo txt;
+        -> printArray - Usada p/ imprimir a matriz
+        -> limpaVet - Usada p/ limpar o vetor principal - (Evita erros ao substituir valores no vetor, tais como retorno de "?")
+        -> semcaminho - Verifica se o vetor está preenchido e só retorna caso não estiver, escrevendo um alerta;
+
+ **************************************************************************/
+
 import java.io.*;
 public class MazeFinal {
     public static void main (String[] args) throws IOException {
@@ -117,15 +135,14 @@ public class MazeFinal {
             for (int j = 0; j < vet.length; j++) {
                 System.out.print(vet[j]);
             }
-            System.out.print("\n\n");
+            System.out.print("\n");
 
 
-            //System.out.println("\n\n"); printArray(matrizMaze); // Imprime a matriz
             
             // Imprime valores de saída armazenados no vetor                
             System.out.print("Resultado: ");
             if ((vet[0]!='C') && (vet[0]!='E') && (vet[0]!='B') && (vet[0]!='D')) { //se nao tem nada preenchido
-                System.out.print("O labirinto não tem saída");
+                System.out.print("O labirinto não tem saída\n");
             } else {
                 System.out.print(result);
                 for (int i = 0; i < vet.length; i++) {
@@ -262,6 +279,5 @@ public class MazeFinal {
             System.out.print("Não há caminhos possiveis.\n\n");
         }
 }
-
 
 }
