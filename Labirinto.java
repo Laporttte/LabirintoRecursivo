@@ -1,10 +1,10 @@
 /*************************************************************************
     Alunos
-        Artur Marcos da Silva - 00796214
         Anna Carla Teixeira da Silva - 00796175
+        Artur Marcos da Silva - 00796214
         Flavio Gomes Reis - 796524
 
-    Labirinto versão: 5.3
+    Labirinto versão: 5.4
 
     Funções: 
         -> Void main - É a função principal, onde lê o arquivo, procura as posições iniciais/existencia de chaves, chama funções e imprime resultados.
@@ -19,10 +19,10 @@
 import java.io.*;
 public class Labirinto {
     public static void main (String[] args) throws IOException {
-        String path = "LabirintoTXT/mapaBonus2.txt";  File arq = new File(path);  //Escolha do mapa.
+        String path = "LabirintoTXT/mapa5.txt";  File arq = new File(path);  //Escolha do mapa.
     
         int qntColuna=0, qntLinha=0;            // armazena tam do labirinto p/ criar matriz.
-        int indexVetor=-1, id=0;               // é aux p/ indice do vetor que armazena respostas | aux é auxiliar p/ identificar o que pesquisar primeiro ("K" ou "D")
+        int indexVetor=-1, id=0;                // é aux p/ indice do vetor que armazena respostas | aux é auxiliar p/ identificar o que pesquisar primeiro ("K" ou "D")
         int EntradaLin=0, EntradaCol=0;         // armazena entradas temporariamentes ("S") ou ("S" -> "K" -> "D")
         int startx=0, starty=0;                 // var's p/ armazenar valores do "S" e poder imprimi-lo na posição certa (final do codigo)
         boolean key_door = false;               // boolean p/ existencia de chave
