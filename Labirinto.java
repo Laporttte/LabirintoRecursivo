@@ -4,7 +4,7 @@
         Artur Marcos da Silva - 00796214
         Flavio Gomes Reis - 796524
 
-    Labirinto versão: 5.4
+    Labirinto versão: 5.5
 
     Funções: 
         -> Void main - É a função principal, onde lê o arquivo, procura as posições iniciais/existencia de chaves, chama funções e imprime resultados.
@@ -19,7 +19,7 @@
 import java.io.*;
 public class Labirinto {
     public static void main (String[] args) throws IOException {
-        String path = "LabirintoTXT/mapa5.txt";  File arq = new File(path);  //Escolha do mapa.
+        String path = "LabirintoTXT/mapa9.txt";  File arq = new File(path);  //Escolha do mapa.
     
         int qntColuna=0, qntLinha=0;            // armazena tam do labirinto p/ criar matriz.
         int indexVetor=-1, id=0;                // é aux p/ indice do vetor que armazena respostas | aux é auxiliar p/ identificar o que pesquisar primeiro ("K" ou "D")
@@ -94,7 +94,7 @@ public class Labirinto {
                 arqParaMatriz(matrizMaze, arq); // Prenchimento da matriz com novas entradas
 
             // Procura a porta
-            id = 2; // o valor 1 informa que a função recursiva deve procurar a chave.
+            id = 2; // o valor 2 informa que a função recursiva deve procurar a porta.
 
             labirintoRecursivo(EntradaCol, EntradaLin, matrizMaze, qntColuna, qntLinha, vet, indexVetor, key_door, id, coordenadas); 
             imprimeMatriz(matrizMaze, startx, starty); // imprime a matriz (com simbolos)
@@ -155,7 +155,7 @@ public class Labirinto {
     public static int labirintoRecursivo (int EntradaCol,int EntradaLin, String matrizMaze [][], int qntColuna, int qntLinha, char vet[], int indexVetor, boolean key_door, int id, String [] coordenadas) {
         indexVetor++;
 
-            /* Se o NPC ultrapassa matriz - retorna um passo */
+            /* Se a posicao do NPC ultrapassa matriz - retorna um passo */
             if ( EntradaLin >= qntLinha || EntradaLin < 0 || EntradaCol >= qntColuna || EntradaCol < 0){
                 return 0;
             } 
@@ -209,13 +209,13 @@ public class Labirinto {
             return 1;
         }
 
-        matrizMaze[EntradaLin][EntradaCol] = " ";  // caso tenha sido retornado, ou seja, o caminho não deu certo. O caminho recebe novamente " ";
+        // caso tenha sido retornado, ou seja, o caminho não deu certo. O caminho recebe novamente " ";
+        matrizMaze[EntradaLin][EntradaCol] = " ";  
             return 0;
 
     }
 
     public static void arqParaMatriz (String matrizMaze[][], File arq ) {
-        /* lê arquivo e armazena em matriz */
         int i=0; // int para ajudar percorrer linhas.
         char caracter;
         try {
@@ -237,7 +237,6 @@ public class Labirinto {
     }
 
     public static void imprimeMatriz (String matrizMaze[][], int startx, int starty) {
-        /* imprime matriz */
         matrizMaze[starty][startx] = "S"; // passa valor "S" p/matriz ser impressa corretamente
 
         for (int i = 0; i < matrizMaze.length; i++) {
@@ -258,7 +257,7 @@ public class Labirinto {
 
     public static void semCaminho (char vet[]) {
         /* função verifica se o vetor está vazio, caso esteja, mostra que não há caminhos */
-        if ((vet[0]!='C') && (vet[0]!='E') && (vet[0]!='B') && (vet[0]!='D')) { //se nao tem nada preenchido
+        if ((vet[0]!='C') && (vet[0]!='E') && (vet[0]!='B') && (vet[0]!='D')) { 
             System.out.print("Não há caminhos possiveis.\n\n");
         }
     }   
